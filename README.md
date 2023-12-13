@@ -53,13 +53,13 @@ Make sure you have the [required](#requirements) version of Python installed.
     ```
 
 5. Configure Google ReCaptcha keys in the `main.py` file.
-    ```
+    ```python
     app.config["RECAPTCHA_PUBLIC_KEY"] = "XXXXX"
     app.config["RECAPTCHA_PRIVATE_KEY"] = "XXXXX"
     ```
 
 6. Configure mail server options as necessary in the `main.py` file.
-    ```
+    ```python
     app.config['MAIL_SERVER'] = "smtp.googlemail.com"
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
