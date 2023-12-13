@@ -42,13 +42,38 @@ Make sure you have the [required](#requirements) version of Python installed.
     python3 -m pip install -r requirements.txt
     ```
 
-3. Run the application using Flask on port `5000`. You can change the port if necessary.
+3. Construct a database using the schema file.
+    ```
+    sqlite3 database.db < schema.sql
+    ```
+
+4. Create an admin account for the web application and note the email and password (optional). These details can be changed as necessary within the script.
+    ```
+    python3 create_admin_account.py
+    ```
+
+5. Configure Google ReCaptcha keys in the `main.py` file.
+    ```
+    app.config["RECAPTCHA_PUBLIC_KEY"] = "XXXXX"
+    app.config["RECAPTCHA_PRIVATE_KEY"] = "XXXXX"
+    ```
+
+6. Configure mail server options as necessary in the `main.py` file.
+    ```
+    app.config['MAIL_SERVER'] = "smtp.googlemail.com"
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = "XXXXX"
+    app.config['MAIL_PASSWORD'] = "XXXXX"
+    ```
+
+7. Run the application using Flask on port `5000`. You can change the port if necessary.
 
     ```
     flask run --port 5000
     ```
 
-4. Visit the website via the address output in the terminal after the previous command. This will probably be `127.0.0.1:5000`.
+8. Visit the website via the address output in the terminal after the previous command. This will probably be `127.0.0.1:5000`.
 
 ## Security features
 
