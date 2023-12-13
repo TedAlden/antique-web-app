@@ -14,11 +14,6 @@ import pyotp
 import jwt
 import os
 
-# TODO: use app_before decorator to load user before reach route.
-# TODO: change schema to use UserID as primary key instead of email
-# TODO: use flask-login?
-# TODO: use flask-sqlalchemy?
-
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -37,9 +32,17 @@ mail = Mail(app)
 # initialise CSRF protection
 csrf = CSRFProtect(app)
 
-# configure path for saving images uploaded through forms
+# configure path for saving images uploaded through evaluation forms
 images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
+
+
+def send_email(title, body, recipients):
+    title = title
+    sender = "t.aldentempleman5@gmail.com"
+    body = body
+    msg = Message(title, sender=sender, recipients=recipients, html=body)
+    mail.send(msg)
 
 
 @app.route("/")
@@ -49,12 +52,13 @@ def root():
 
 @app.route("/evaluations/all")
 def all_evaluations():
+    if session.get("is_admin"):
+        evaluations = models.get_all_evaluations()
+        return render_template("allevaluations.html", evaluations=evaluations)
 
-    # TODO: check if admin
-
-    evaluations = models.get_all_evaluations()
-    
-    return render_template("allevaluations.html", evaluations=evaluations)
+    else:
+        flash("You must be an admin to view this page.", "error")
+        return redirect("/")
 
 
 @app.route("/evaluations/request", methods=["GET", "POST"])
@@ -220,21 +224,14 @@ def login():
                     models.set_user_login_attempt_count(email, attempts + 1)
                     if attempts > 5:
                         models.set_user_verified(email, False)
-
                         # send verification email
                         token = jwt.encode({"email": email}, app.secret_key)
                         title = "Reverify your account"
-                        sender = "t.aldentempleman5@gmail.com"
                         body = render_template("emails/verifypassword.html", token=token)
-                        msg = Message(title, sender=sender, recipients=[email], html=body)
-
-                        try:
-                            mail.send(msg)
-                            flash("5 failed login attempts. Account locked. Reverify your account via email to regain access", "error")
-                            return redirect(url_for("login"))
-                        except Exception as e:
-                            flash("Error sending email, contact admin.", "error")
-                            return redirect("/")
+                        
+                        send_email(title, body, email)
+                        flash("5 failed login attempts. Account locked. Reverify your account via email to regain access", "error")
+                        return redirect(url_for("login"))
 
                     flash("Incorrect password.", "error")
                     return redirect("/login")
@@ -389,7 +386,7 @@ def delete_account():
     if request.method == "POST":
         models.delete_user(session.get("email"))
         session.clear()
-        flash("Account successfully.", "success")
+        flash("Account successfully deleted.", "success")
         return redirect("/")
 
     if request.method == "GET":
@@ -412,11 +409,12 @@ def request_password_reset():
 
             # generate the reset password email
             title = "Reset your password"
-            sender = "t.aldentempleman5@gmail.com"
             body = render_template("emails/resetpassword.html", token=token)
-            msg = Message(title, sender=sender, recipients=[email], html=body)
+            # send the reset password email
+            send_email(title, body, email)
+            flash("Request sent. Use link your email inbox.", "success")
+            return redirect("/")
 
-            # attempt to send the reset password email
             try:
                 mail.send(msg)
                 flash("Request sent. Use link your email inbox.", "success")
