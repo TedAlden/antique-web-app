@@ -49,7 +49,7 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 4. Create an admin account for the web application and note the email and password (optional). These details can be changed as necessary within the script.
     ```
-    python3 create_admin_account.py
+    python3 create_admin_account.py [EMAIL] [PASSWORD]
     ```
 
 5. Configure Google ReCaptcha keys in the `main.py` file.
