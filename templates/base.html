@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+    {% endblock %}
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            {% if session['logged_in'] and not session['is_admin'] %}
+            <li><a href="{{ url_for('request_evaluation') }}">Request Evaluation</a></li>
+            <li><a href="{{ url_for('my_evaluations') }}">My Evaluations</a></li>
+            {% elif session['logged_in'] and session['is_admin'] %}
+            <li><a href="{{ url_for('all_evaluations') }}">All Evaluations</a></li>
+            {% endif %}
+
+            <div style="float:right;">
+                {% if session['logged_in'] %}
+                <li><a id="logout-button" href="#">Logout</a></li>
+                <li><a href="{{ url_for('account') }}">Manage Account</a></li>
+                {% endif %}
+
+                {% if not session['logged_in'] %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+                {% endif %}
+            </div>
+        </ul>
+    </nav>
+    <div id="content">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+            <li class="{{ category }}">
+                <span>{{ message }}</span>
+                <a class="dismiss" onclick="var li = this.parentNode; var ul = li.parentNode; ul.removeChild(li);"></a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <form id="logout-form" action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
+        </form>
+        <script>
+        window.addEventListener("load", () => {
+            document.getElementById("logout-button").addEventListener("click", (e) => {
+                e.preventDefault();
+                document.getElementById("logout-form").submit();
+            });
+        });
+        </script>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Lovejoy's Antiques</title>
-    <link rel="stylesheet" href="/static/style.css"/>
-</head>
-<body>
-    <h1>Welcome!</h1>
-    <h2>Lovejoy's Antique Evaluation</h2>
-    <ul>
-        <li><a href="#">Register</a></li>
-        <li><a href="#">Login</a></li>
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Welcome!</h1>
+<h2>Lovejoy's Antique Evaluation</h2>
+{% if session['logged_in'] %}
+<li><a href="{{ url_for('request_evaluation') }}">Request Evaluation</a></li>
+<li><a href="{{ url_for('my_evaluations') }}">My Evaluations</a></li>
+{% endif %}
+{% if not session['logged_in'] %}
+<span>Please <a href="{{ url_for('login') }}">Log in</a> or <a href="{{ url_for('register') }}">Register</a> to continue!</span>
+{% endif %}
+{% endblock %}

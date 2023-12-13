@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Confirm your Security Questions{% endblock %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+<h1>Confirm your security questions to log in</h1>
+<form id="entersecurityquestions" action="{{ url_for('enter_security_questions') }}" method="post">
+    <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
+    <dl>
+        {{ render_field(form.answer1) }}
+        {{ render_field(form.answer2) }}
+        {{ render_field(form.answer3) }}
+    </dl>
+    <input type="submit" value="Confirm">
+</form>
+{% endblock %}

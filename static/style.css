@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+div#content {
+    margin: 8px;
+}
+
+/*
+    Navigation bar
+*/
+
+nav {
+    background-color: #f1f1f1;
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline-block;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/*
+    Forms
+*/
+
+form label {
+    font-size: 12px;
+}
+
+form dd {
+    margin-left: 0;
+}
+
+form dd ul.errors {
+    padding: 0;
+}
+
+/*
+    Flash messages
+*/
+
+ul.flashes {
+    margin: 0;
+    padding: 0;
+}
+
+ul.flashes li {
+    padding: 15px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 20px;
+    text-shadow: 1px 1px rgba(250, 250, 250, 0.3);
+    border: 1px solid black;
+    margin-bottom: 8px;
+}
+
+ul.flashes li.error {
+    color: #D8000C;
+    border-color: #D8000C;
+    background-color: #FFBABA;
+}
+
+ul.flashes li.info {
+    color: #059;
+    border-color: #059;;
+    background-color: #BEF;
+}
+
+ul.flashes li.warning {
+    color: #9F6000;
+    border-color: #9F6000;
+    background-color: #FEEFB3;
+}
+
+ul.flashes li.success {
+    color: #270;
+    border-color: #270;;
+    background-color: #DFF2BF;
+}
+
+ul.flashes li a.dismiss {
+    float: right;
+}
+
+ul.flashes li a.dismiss:hover {
+    cursor: pointer;
+}
+
+ul.flashes li a.dismiss::before {
+    content: "✖";
+}
+
+/*
+    Evaluation view table
+*/
+
+table.evaluations, table.evaluations th, table.evaluations td {
+    border: 1px solid black;
+}
+
+table.evaluations td {
+    max-width: 25%;
+}
+
+table.evaluations td img {
+    max-width: 30vw;
+}
+
+form {
+    width: 350px;
+}
+
+form input[type="text"], form input[type="password"] {
+    width: 100%;
+}
+
+input#twofasecret {
+    width: 350px;
+}
+
+/* form input[type="button"], form input[type="submit"] {
+
+} */
+
+form textarea {
+    width: 100%;
+    height: 200px;
+    font-family: Arial, Helvetica, sans-serif;
+}

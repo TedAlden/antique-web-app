@@ -8,9 +8,9 @@
 - [Requirements](#requirements)
 - [Setup](#setup)
 - [Security features](#security-features)
-    - [Password policies](#password-policies)
+    - [Password security](#password-security)
     - [Authentication](#authentication)
-    - [Vulnerability and common attack coverage](#vulnerability-and-common-attack-coverage)
+    - [Vulnerability protection](#vulnerability-protection)
 
 
 ## Introduction
@@ -42,7 +42,7 @@ Make sure you have the [required](#requirements) version of Python installed.
     python3 -m pip install -r requirements.txt
     ```
 
-3. Run the application using Flask on port 5000. You can change the port if necessary.
+3. Run the application using Flask on port `5000`. You can change the port if necessary.
 
     ```
     flask run --port 5000
@@ -54,27 +54,28 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 The goal of this coursework project was to deliver only a 'minimum-viable product' for an antique dealer. The focus was instead on the security features of the web application, as detailed below.
 
-### Password policies
+### Password security
 
-- Password entropy
-- Encrypted storage of passwords
-- Salted passwords
-- Security questions
-- Password recovery
+- "Strong" passwords required
+- Passwords are hashed in the database
+- Salted password hashes
+- Password recovery feature
 
 ### Authentication
 
-- User identity management (Registration, Login, Change password, Change email, Delete account)
-- Email verification for registration
-- 2 factor authentication for login using PIN (via Email or Google Authenticator)
+- User account management (Register, login, change password or email, delete account)
+- Email verification required for registration
+- 2 factor authentication via Google Authenticator
+- Security questions
+- Captchas
 
-### Vulnerability and common attack coverage
+### Vulnerability protection
 
 - SQL injection
 - XSS
 - CSRF
 - File upload
-- Brute force attack (Limit number of login attempts)
+- Brute force attack (Limited number of login attempts)
 - Botnet attack (Captcha required for login or signup)
-- Dictionary attack (Require stronger passwords)
-- Rainbow table attack (Salted passwords)
+- Dictionary attack (strong passwords are required)
+- Rainbow table attack (Passwords are salted)

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Evaluations{% endblock %}
+{% block content %}
+<h1>My Evaluations</h1>
+View your submitted evaluations below.
+Want to <a href="{{ url_for('request_evaluation') }}">request another evaluation</a>?
+<br><br>
+<table class="evaluations">
+    <tr>
+        <th>Evaluation Details</th>
+        <th>Image</th>
+        <th>Options</th>
+    </tr>
+    {% for row in evaluations %}
+    <tr evaluation-id="{{ row[0] }}">
+        <td>
+            <b>Email:</b> {{ row[1] }}<br>
+            <b>Phone no.:</b> Not finished<br>
+            <b>Preferred Contact:</b> {{ row[3] }}<br>
+            <b>Description:</b> {{ row[2] }}<br>
+            <b>Evaluation:</b> Awaiting evaluation...
+        </td>
+        <td>
+            {% if row[4] %}
+            <img src="{{ url_for('evaluation_image', filename=row[4]) }}">
+            {% else %}
+            No Image supplied.
+            {% endif %}
+        </td>
+        <td>
+            <a href="#">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
