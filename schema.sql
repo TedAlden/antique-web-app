@@ -2,11 +2,11 @@
 -- sqlite3 database.db < schema.sql
 
 -- Drop tables first, if they exist
--- DROP TABLE Users;
--- DROP TABLE TwoFA;
--- DROP TABLE SecurityQuestions;
--- DROP TABLE EvaluationRequests;
--- DROP TABLE LoginCounter;
+DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS TwoFA;
+DROP TABLE IF EXISTS SecurityQuestions;
+DROP TABLE IF EXISTS EvaluationRequests;
+DROP TABLE IF EXISTS LoginCounter;
 
 -- Create tables
 CREATE TABLE Users (
