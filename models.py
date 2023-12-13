@@ -4,13 +4,6 @@ import sqlite3
 DATABASE_NAME = "database.db"
 
 
-def init_db():
-    con = sqlite3.connect(DATABASE_NAME)
-    cur = con.cursor()
-    with open('schema.sql') as fp:
-        cur.executescript(fp.read())
-
-
 def insert_user(name, hashed_password, salt, email, phone, twofa_secret, is_verified=False, is_admin=False):
     con = sqlite3.connect(DATABASE_NAME)
     cur = con.cursor()
