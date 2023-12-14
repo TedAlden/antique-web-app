@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, flash, redirect, session, send_file, url_for
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_uploads import configure_uploads, IMAGES, UploadSet
-from flask_mail import Mail,Message
+from flask_mail import Mail, Message
 
 from werkzeug.utils import secure_filename
+from dotenv import dotenv_values
 from time import time
 
 from helpers import *
@@ -14,17 +15,9 @@ import pyotp
 import jwt
 import os
 
-app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-app.config["RECAPTCHA_PUBLIC_KEY"] = "6LeWLCwpAAAAAIjHqKrw75cjLaTFMQoXaHSHYKQ4"
-app.config["RECAPTCHA_PRIVATE_KEY"] = "6LeWLCwpAAAAAItXbSSiS4L2efcIR4ySLEj3kk8r"
-app.config['UPLOADED_IMAGES_DEST'] = 'uploads/images'
-app.config['MAIL_SERVER'] = "smtp.googlemail.com"
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = "t.aldentempleman5@gmail.com"
-app.config['MAIL_PASSWORD'] = "chuf hbip lulg zuei"
+app = Flask(__name__)
+app.config.from_mapping(dotenv_values())
 
 # initialise mail server
 mail = Mail(app)
@@ -41,7 +34,7 @@ def send_email(title, body, recipients):
     title = title
     sender = "t.aldentempleman5@gmail.com"
     body = body
-    msg = Message(title, sender=sender, recipients=recipients, html=body)
+    msg = Message(title, sender=sender, recipients=[recipients], html=body)
     mail.send(msg)
 
 
