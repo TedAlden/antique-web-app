@@ -30,11 +30,11 @@ images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
 
 
-def send_email(title, body, recipients):
+def send_email(title: str, body: str, recipient: str):
     title = title
     sender = "t.aldentempleman5@gmail.com"
     body = body
-    msg = Message(title, sender=sender, recipients=[recipients], html=body)
+    msg = Message(title, sender=sender, recipients=[recipient], html=body)
     mail.send(msg)
 
 
@@ -45,6 +45,7 @@ def root():
 
 @app.route("/evaluations/all")
 def all_evaluations():
+    # check that user is an admin in order to view this page
     if session.get("is_admin"):
         evaluations = models.get_all_evaluations()
         return render_template("allevaluations.html", evaluations=evaluations)
@@ -59,13 +60,14 @@ def request_evaluation():
     form = RequestEvaluationForm(request.form)
 
     if request.method == "POST" and form.validate():
-        print(form.data)
-        email = session["email"]
+        email = session.get("email")
         description = form.description.data
         contact = form.contact.data
         image = request.files["image"]
         photo_path = None
 
+        # if the evaluation form had an image in it, save it to the
+        # server and store its path in the database
         if image:
             # TODO: change filename to a secure hash?
 
@@ -74,7 +76,9 @@ def request_evaluation():
             path = os.path.join(app.config['UPLOADED_IMAGES_DEST'], filename)
             image.save(path)
 
+        # save evaluation request into database
         models.insert_evaluation(email, description, contact, photo_path)
+
         flash("Successfully sent evaluation request!", "success")
         return redirect(url_for("request_evaluation"))
     
@@ -90,17 +94,20 @@ def request_evaluation():
 
 @app.route("/evaluations/my")
 def my_evaluations():
+    # redirect the user to the login page if they are not logged in, as
+    # only logged-in users should see this
     if not session.get("logged_in"):
         flash("You must log in or register first.", "warning")
         return redirect("/login")
 
-    evaluations = models.get_user_evaluations(session["email"])
+    evaluations = models.get_user_evaluations(session.get("email"))
     
     return render_template("myevaluations.html", evaluations=evaluations)
 
 
 @app.route("/evaluations/image/<filename>")
 def evaluation_image(filename):
+    # this route makes the saved evaluation images accessible publicly
     path = os.path.join(app.config['UPLOADED_IMAGES_DEST'], filename)
 
     # TODO: add authentication here
@@ -118,31 +125,29 @@ def register():
         name = form.name.data
         phone = form.phone.data
 
+        # check if email is not already registered with an account
         if not models.check_user_exists(email):
+            # hash and salt password, and generate 2FA secret
             salt = generate_salt()
             hashed_password = hash_password(password, salt)
             twofa_secret = pyotp.random_base32()
+            # insert user into database
             models.insert_user(name, hashed_password, salt, email, phone, twofa_secret)
 
             # send verification email
-            token = jwt.encode({"email": email}, app.secret_key)
             title = "Verify your account"
-            sender = "t.aldentempleman5@gmail.com"
+            token = jwt.encode({"email": email}, app.secret_key)
             body = render_template("emails/verifypassword.html", token=token)
-            msg = Message(title, sender=sender, recipients=[email], html=body)
+            send_email(title, body, email)
 
-            try:
-                mail.send(msg)
-                flash("Verification email sent.", "success")
-                return redirect(url_for("login"))
-            except Exception as e:
-                flash("Error sending verification email.", "error")
-                return redirect("/")
+            flash("Verification email sent.", "success")
+            return redirect(url_for("login"))
 
         else:
             flash("Email is already registered.", "error")
 
     if request.method == "GET":
+        # check if user is not already logged in
         if session.get("logged_in"):
             flash("You are already logged in.", "warning")
             return redirect("/")
@@ -152,6 +157,7 @@ def register():
 
 @app.route("/register/verify/<token>")
 def verify_email(token):
+    # attempt to decode the token in the verification link URL
     try:
         data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=['HS256'])
         email = data["email"]
@@ -159,16 +165,19 @@ def verify_email(token):
         # return HTTP 400 status code for this error
         return "Error decoding verification token.", 400
 
+    # check if the decoded email exists
     if models.check_user_exists(email):
-        if models.get_user_verified(email):
-            flash(f"Email already verified!", "warning")
-            return redirect("/")
-        else:    
+        # check if email is not already verified
+        if not models.get_user_verified(email):
             models.set_user_verified(email, True)
             models.set_user_login_attempt_count(email, 0)
+
             flash("Successfully verified email.", "success")
             return redirect("/")
-    
+        else:   
+            flash(f"Email already verified!", "warning")
+            return redirect("/")
+
     else:
         return f"Email not found!", 404
 
@@ -181,31 +190,42 @@ def login():
         email = form.email.data.lower()
         password = form.password.data
 
+        # first, check if the email exists as an account
         if models.check_user_exists(email):
+            # hash the password submitted using the user's salt
             salt = models.get_user_salt(email)
             given_hashed_password = hash_password(password, salt)
 
             real_hashed_password = models.get_user_hashed_password(email)
             username = models.get_user_name(email)
 
+            # check if the account with this email is verified
             if models.get_user_verified(email):
-
+                
+                # compare the hash of the submitted password to the hash
+                # stored in the database
                 if given_hashed_password == real_hashed_password:
                     session["email"] = email
                     session["username"] = username
                     
+                    # if the account has 2fa enabled, redirect them
+                    # there before completing the login
                     if models.check_2fa_enabled(email):
                         session["awaiting_otp"] = True
                         return redirect("/login/enterotp")
 
+                    # if the account has security questions configured,
+                    # redirect them there before completing the login
                     elif models.get_user_security_questions_enabled(session["email"]):
                         session["awaiting_questions"] = True
                         return redirect(url_for("enter_security_questions"))
 
+                    # otherwise, complete the login process now
                     else:
                         session["logged_in"] = True
-                        models.set_user_login_attempt_count(email, 0)
                         session["is_admin"] = models.check_user_admin(email)
+                        models.set_user_login_attempt_count(email, 0)
+
                         flash("You have been successfully logged in.", "success")
                         return redirect("/")
 
@@ -217,17 +237,17 @@ def login():
                     models.set_user_login_attempt_count(email, attempts + 1)
                     if attempts > 5:
                         models.set_user_verified(email, False)
-                        # send verification email
+                        # send re-verification email
                         token = jwt.encode({"email": email}, app.secret_key)
                         title = "Reverify your account"
                         body = render_template("emails/verifypassword.html", token=token)
-                        
                         send_email(title, body, email)
-                        flash("5 failed login attempts. Account locked. Reverify your account via email to regain access", "error")
+
+                        flash("Exceeded 5 failed login attempts. Please reverify your account via email to regain access.", "error")
                         return redirect(url_for("login"))
 
                     flash("Incorrect password.", "error")
-                    return redirect("/login")
+                    return redirect(url_for("login"))
 
             else:
                 flash("Account email must be verified before logging in.", "warning")
@@ -238,12 +258,21 @@ def login():
             return redirect("/login")
 
     if request.method == "GET":
+        # if the user is already logged in, redirect them away
         if session.get("logged_in"):
             flash("You are already logged in.", "warning")
             return redirect("/")
 
+        # if the user was already part-way through the login process,
+        # i.e, awaiting their entry of a 2FA pin or security questions,
+        # then cancel that login attempt and reset, ready to restart the
+        # login process again.
         if session.get("awaiting_otp"):
             del session["awaiting_otp"]
+            return redirect("/login")
+
+        if session.get("awaiting_questions"):
+            del session["awaiting_questions"]
             return redirect("/login")
 
     return render_template("login.html", form=form)
@@ -253,7 +282,17 @@ def login():
 def enterotp():
     form = EnterOTP(request.form)
 
+    # redirect away if they should not be at this login stage
+    if not session.get("awaiting_otp"):
+        return redirect("/")
+
+    # redirect away if already logged in
+    if session.get("logged_in"):
+        flash("You are already logged in.", "warning")
+        return redirect("/")
+
     if request.method == "POST" and form.validate():
+        email = session.get("email")
         # ensure submitted OTP is numeric
         try:
             otp = int(form.otp.data)
@@ -261,19 +300,20 @@ def enterotp():
             flash("Invalid OTP.", "error")
             return redirect("/login/enterotp")
 
-        # use user's secret to construct TOTP authenticator    
+        # use the user's secret to construct a TOTP authenticator    
         secret = models.get_user_2fa_secret(session["email"])
         encoded_secret = bytearray(secret, 'ascii').decode('utf-8')
         totp = pyotp.TOTP(encoded_secret)
         # verify the submitted OTP against what it should be
         correct_otp = totp.verify(otp)
 
-        # if correct OTP, continue
+        # if the OTP is correct...
         if correct_otp:
             # redirect to security questions if they are enabled
-            if models.get_user_security_questions_enabled(session["email"]):
+            if models.get_user_security_questions_enabled(email):
                 session["awaiting_questions"] = True
                 del session["awaiting_otp"]
+
                 return redirect(url_for("enter_security_questions"))
 
             # otherwise, login
@@ -282,6 +322,7 @@ def enterotp():
                 session["is_admin"] = models.check_user_admin(email)
                 models.set_user_login_attempt_count(email, 0)
                 del session["awaiting_otp"]
+
                 flash("You are now logged in.", "success")
                 return redirect("/")
 
@@ -290,16 +331,7 @@ def enterotp():
             flash("Incorrect OTP.", "error")
             return redirect(url_for("enterotp"))
 
-    elif request.method == "GET":
-        # redirect away if already logged in
-        if session.get("logged_in"):
-            flash("You are already logged in.", "warning")
-            return redirect("/")
-
-        # redirect away if they should not be at this login stage
-        if not session.get("awaiting_otp"):
-            return redirect("/")
-        
+    if request.method == "GET":
         return render_template("enterotp.html", form=form)
 
 
@@ -341,7 +373,7 @@ def enter_security_questions():
             flash("Incorrect security questions.", "error")
             return redirect(url_for("enter_security_questions"))
 
-    elif request.method == "GET":
+    if request.method == "GET":
         # put each question as the label for each input box
         form.answer1.label = q1
         form.answer2.label = q2
@@ -352,6 +384,7 @@ def enter_security_questions():
 
 @app.route("/logout", methods=["POST"])
 def logout():
+    # user can only logout if they are already logged in
     if session.get("logged_in"):
         session.clear()
         flash("You have been successfully logged out.", "success")
@@ -361,6 +394,7 @@ def logout():
 
 @app.route("/account")
 def account():
+    # user can only view their account page if they are logged in
     if not session.get("logged_in"):
         flash("You must log in or register first.", "warning")
         return redirect("/login")
@@ -372,13 +406,16 @@ def account():
 def delete_account():
     form = DeleteAccountForm(request.form)
 
+    # user can only delete their account if logged in
     if not session.get("logged_in"):
         flash("You must log in or register first.", "warning")
         return redirect("/login")
 
     if request.method == "POST":
+        # delete user and clear session
         models.delete_user(session.get("email"))
         session.clear()
+
         flash("Account successfully deleted.", "success")
         return redirect("/")
 
@@ -399,22 +436,14 @@ def request_password_reset():
             token = jwt.encode({'email': email,
                                 'expires': time() + 600},
                                 key=app.config["SECRET_KEY"])
-
-            # generate the reset password email
+            
+            # send the reset password email
             title = "Reset your password"
             body = render_template("emails/resetpassword.html", token=token)
-            # send the reset password email
             send_email(title, body, email)
+
             flash("Request sent. Use link your email inbox.", "success")
             return redirect("/")
-
-            try:
-                mail.send(msg)
-                flash("Request sent. Use link your email inbox.", "success")
-                return redirect("/")
-            except Exception as e:
-                flash("Error sending verification email.", "error")
-                return redirect(url_for("request_password_reset"))
 
         else:
             flash("Email does not exist.", "error")
@@ -428,7 +457,7 @@ def request_password_reset():
 def reset_password(token):
     form = ResetPasswordForm(request.form)
 
-    # try to decode data (i.e., email) from the reset password token
+    # try to decode data from the reset password token
     try:
         data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=['HS256'])
         email = data["email"]
@@ -438,15 +467,15 @@ def reset_password(token):
         # return HTTP 400 status code if it token can not be decoded
         return "Error decoding token.", 400
 
-    # make sure reset password link has not expired
+    # make sure the reset password link has not expired
     if time() > expires:
         flash("Reset password link has expired. Request a new one.", "error")
         return redirect(url_for("login"))
 
     if request.method == "POST":
+        # hash new password
         new_password = form.password.data
         salt = models.get_user_salt(email)
-        # hash new password
         new_password_hashed = hash_password(new_password, salt)
         # update database with new password hash
         models.set_user_hashed_password(email, new_password_hashed)
@@ -480,12 +509,13 @@ def manage_security_questions():
             return redirect(url_for("manage_security_questions"))
 
     elif request.method == "GET":
+        # redirect to login page if user not already logged in
         if not session.get("logged_in"):
             flash("You must log in or register first.", "warning")
             return redirect(url_for("login"))
 
         if email:
-            # autofill form with previous questions and answers
+            # autofill the form with previous questions and answers
             old_questions = models.get_user_security_questions(email)
             form.question1.data = old_questions[0]
             form.answer1.data = old_questions[1]
@@ -504,28 +534,31 @@ def manage2fa():
     if request.method == "POST":
         email = session.get("email")
         if email:
-            # if the user presses the "Enable 2FA" button
+            # enable 2FA if the user presses the "Enable" button
             if form.enable.data:
                 models.set_2fa_enabled(email, True)
                 flash("Successfully enabled 2FA.", "success")
                 return redirect(url_for("manage2fa"))
 
-            # elif the user presses the "Disable 2FA" button
+            # disable 2FA if the user presses the "Disable" button
             elif form.disable.data:
                 models.set_2fa_enabled(email, False)
                 flash("Successfully disabled 2FA.", "success")
                 return redirect(url_for("manage2fa"))
 
         else:
-            return "Invalid email.", 400        
+            return "Invalid email.", 400
 
     elif request.method == "GET":
+        # redirect to login page if user is not already logged in
         if not session.get("logged_in"):
             flash("You must log in or register first.", "warning")
             return redirect("/login")
 
-        enabled = models.check_2fa_enabled(session.get("email")) # is 2fa enabled?
-        secret = models.get_user_2fa_secret(session.get("email")) # 2fa secret
+        # display the page with the current enabled/disbaled status and
+        # the 2FA secret
+        enabled = models.check_2fa_enabled(session.get("email"))
+        secret = models.get_user_2fa_secret(session.get("email"))
         
         return render_template("manage2fa.html", enabled=enabled, secret=secret, form=form)
 
