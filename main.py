@@ -169,6 +169,7 @@ def verify_email(token):
     if models.check_user_exists(email):
         # check if email is not already verified
         if not models.get_user_verified(email):
+            # verify the email
             models.set_user_verified(email, True)
             models.set_user_login_attempt_count(email, 0)
 
@@ -230,11 +231,12 @@ def login():
                         return redirect("/")
 
                 else:
-                    # if more than 10 failed login attempts lock account by
+                    # if more than 5 failed login attempts lock account by
                     # 'unverifying it' and requiring a new verification email
                     # to reactivate account.
                     attempts = models.get_user_login_attempt_count(email)
-                    models.set_user_login_attempt_count(email, attempts + 1)
+                    attempts += 1
+                    models.set_user_login_attempt_count(email, attempts)
                     if attempts > 5:
                         models.set_user_verified(email, False)
                         # send re-verification email
