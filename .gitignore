@@ -153,3 +153,4 @@ cython_debug/
 
 database.db
 uploads/images/*
+.DS_Store
