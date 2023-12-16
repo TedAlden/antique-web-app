@@ -80,6 +80,7 @@ def delete_user(email):
     cur = con.cursor()
     cur.execute("DELETE FROM Users WHERE Email LIKE ?", (email,))
     cur.execute("DELETE FROM TwoFA WHERE Email LIKE ?", (email,))
+    cur.execute("DELETE FROM Evaluations WHERE Email LIKE ?", (email,))
     cur.execute("DELETE FROM SecurityQuestions WHERE Email LIKE ?", (email,))
     cur.execute("DELETE FROM LoginCounter WHERE Email LIKE ?", (email,))
     con.commit()
