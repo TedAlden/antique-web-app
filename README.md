@@ -22,6 +22,8 @@ This project was undertaken as the coursework assessment for the *Introduction t
 ## Requirements
 
 - Python version >= `3.11.0`
+- Google ReCaptcha account.
+- Email account for server to use when emailing users.
 
 ## Setup
 
@@ -43,32 +45,44 @@ Make sure you have the [required](#requirements) version of Python installed.
     ```
 
 3. Construct a database using the schema file.
+
     ```
     sqlite3 database.db < schema.sql
     ```
 
 4. Create an admin account for the web application and note the email and password (optional). These details can be changed as necessary within the script.
+
     ```
     python3 create_admin_account.py [EMAIL] [PASSWORD]
     ```
 
 5. Create a `.env` file to configure application settings by copying the `.sample-env`.
+
     ```bash
     cp .sample-env .env
     ```
 
 6. Configure a secret key for the Flask application in the `.env` file.
+
     ```
     SECRET_KEY=
     ```
 
+    A secret key can be randomly generated using the Python terminal command:
+
+    ```bash
+    python3 -c 'import secrets; print(secrets.token_hex())'
+    ```
+
 7. Configure Google ReCaptcha keys in the `.env` file.
+
     ```
     RECAPTCHA_PUBLIC_KEY=
     RECAPTCHA_PRIVATE_KEY=
     ```
 
 8. Configure mail server options in the `.env` file. The server and port are configured for Gmail by default but this can be changed as necessary.
+
     ```bash
     MAIL_SERVER=smtp.googlemail.com
     MAIL_PORT=587
@@ -78,6 +92,7 @@ Make sure you have the [required](#requirements) version of Python installed.
     ```
 
 9. Run the application using Flask on port `5000`. You can change the port if necessary.
+
     ```
     flask run --port 5000
     ```
