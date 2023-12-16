@@ -50,7 +50,7 @@ Make sure you have the [required](#requirements) version of Python installed.
     sqlite3 database.db < schema.sql
     ```
 
-4. Create an admin account for the web application and note the email and password (optional). These details can be changed as necessary within the script.
+4. Optional: Create an admin account for the web application and note the email and password. These details can be changed as necessary within the script.
 
     ```
     python3 create_admin_account.py [EMAIL] [PASSWORD]
