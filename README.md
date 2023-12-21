@@ -2,6 +2,8 @@
 
 > A simple antique dealing web application focusing on implementation of cybersecurity features. Using Python3, Flask, SQLite, HTML/CSS/JS.
 
+![Game screenshot](screenshot.png)
+
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
