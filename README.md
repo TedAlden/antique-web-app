@@ -5,14 +5,16 @@
 ![App screenshot](screenshot.png)
 
 ## Table of Contents
+
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Setup](#setup)
 - [Features](#features)
-    - [Password security](#password-security)
-    - [Authentication](#authentication)
+    - [The minimum viable product](#the-minimum-viable-product)
+    - [Security features](#security-features)
     - [Vulnerability protection](#vulnerability-protection)
+    - [Future work](#future-work)
 
 
 ## Introduction
