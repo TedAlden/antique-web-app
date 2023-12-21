@@ -2,14 +2,14 @@
 
 > A simple antique dealing web application focusing on implementation of cybersecurity features. Using Python3, Flask, SQLite, HTML/CSS/JS.
 
-![Game screenshot](screenshot.png)
+![App screenshot](screenshot.png)
 
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Setup](#setup)
-- [Security features](#security-features)
+- [Features](#features)
     - [Password security](#password-security)
     - [Authentication](#authentication)
     - [Vulnerability protection](#vulnerability-protection)
@@ -35,26 +35,26 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 1. Clone the repository.
 
-    ```
+    ```bash
     git clone https://github.com/TedAlden/antique-web-app
     cd antique-web-app
     ```
 
 2. Install the required Python packages using pip.
 
-    ```
+    ```bash
     python3 -m pip install -r requirements.txt
     ```
 
 3. Construct a database using the schema file.
 
-    ```
+    ```bash
     sqlite3 database.db < schema.sql
     ```
 
 4. Optional: Create an admin account for the web application and note the email and password. These details can be changed as necessary within the script.
 
-    ```
+    ```bash
     python3 create_admin_account.py [EMAIL] [PASSWORD]
     ```
 
@@ -66,7 +66,7 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 6. Configure a secret key for the Flask application in the `.env` file.
 
-    ```
+    ```dosini
     SECRET_KEY=
     ```
 
@@ -78,14 +78,14 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 7. Configure Google ReCaptcha keys in the `.env` file.
 
-    ```
+    ```dosini
     RECAPTCHA_PUBLIC_KEY=
     RECAPTCHA_PRIVATE_KEY=
     ```
 
 8. Configure mail server options in the `.env` file. The server and port are configured for Gmail by default but this can be changed as necessary.
 
-    ```bash
+    ```dosini
     MAIL_SERVER=smtp.googlemail.com
     MAIL_PORT=587
     MAIL_USE_TLS=True
@@ -95,38 +95,47 @@ Make sure you have the [required](#requirements) version of Python installed.
 
 9. Run the application using Flask on port `5000`. You can change the port if necessary.
 
-    ```
+    ```bash
     flask run --port 5000
     ```
 
 10. Visit the website via the address output in the terminal when running the application. This will probably be `127.0.0.1:5000`.
 
-## Security features
+## Features
 
-The goal of this coursework project was to deliver only a 'minimum-viable product' for an antique dealer. The focus was instead on the security features of the web application, as detailed below.
+The goal of this coursework project was to deliver only a 'minimum-viable product' for an antique dealer. The focus was instead on vulnerability protection and the security features of the web application, as detailed below.
 
-### Password security
+### The minimum viable product
 
-- "Strong" passwords required
-- Passwords are hashed in the database
-- Salted password hashes
-- Password recovery feature
+- 'Login' and 'Register' account pages.
+- 'Request an evaluation' page to submit a request with an image and description.
+- 'View evaluations' page to see a user's own requests for evaluations.
+- 'View all evaluations' page to see all users requests, only viewable to admins.
 
-### Authentication
+### Security features
 
-- User account management (Register, login, change password or email, delete account)
-- Email verification required for registration
-- 2 factor authentication via Google Authenticator
-- Security questions
-- Captchas
+- "Strong" passwords required at registration.
+- Passwords are hashed and salted before being stored in the database.
+- Passwords can be reset via email if forgotten.
+- Users can delete their account and their associated evaluations.
+- Email verification required for completing account registration.
+- Two-factor authentication via Google Authenticator can be enabled for login.
+- Security questions can be enabled for login.
+- Google ReCaptcha required for login.
 
 ### Vulnerability protection
 
-- SQL injection
-- XSS
-- CSRF
-- File upload
-- Brute force attack (Limited number of login attempts)
-- Botnet attack (Captcha required for login or signup)
-- Dictionary attack (strong passwords are required)
-- Rainbow table attack (Passwords are salted)
+- SQL injection prevented via SQLite parameterised queries.
+- XSS prevented using the Jinja2 template engine.
+- CSRF prevented using CSRF tokens from Flask-WTF.
+- File upload vulnerabilities are prevented by sanitising filenames and whitelisting only image formats.
+- Brute force attacks prevented by limiting number of login attempts before locking a user account, at which point, the account must be re-activated via email.
+- Botnet attacks prevented by requiring a successful ReCaptcha submission for login.
+- Dictionary attack prevented by requiring strong passwords at registration.
+- Rainbow table attack prevented by salting the password hashes in the database.
+
+### Future work
+
+- Evaluation images should not be served by an unauthenticated API route.
+- Users should be able to change their email in case it becomes comprimised.
+- Passwords could be checked against lists of popular or pwned credentials.
