@@ -32,7 +32,7 @@ configure_uploads(app, images)
 
 def send_email(title: str, body: str, recipient: str):
     title = title
-    sender = "t.aldentempleman5@gmail.com"
+    sender = app.config['MAIL_USERNAME']
     body = body
     msg = Message(title, sender=sender, recipients=[recipient], html=body)
     mail.send(msg)
