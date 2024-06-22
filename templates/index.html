@@ -2,60 +2,26 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <br>
-<h1>Lovejoy's Antique Evaluation</h1>
-<br>
-<div id="carouselExample" class="carousel slide">
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Lovejoy's Antiques</h1>
+        <p class="col-md-8 fs-4">Your premier destination for discovering, listing, and evaluating timeless artifacts. Whether you're a seasoned collector, a curious novice, or simply someone with an inherited piece, our platform is designed to cater to all your antique needs.</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Register</a>
     </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <!-- <img src="..." class="d-block w-100" alt="..."> -->
-            <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400"
-                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Second slide"
-                preserveAspectRatio="xMidYMid slice" focusable="false">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#666"></rect>
-                <text x="50%" y="50%" fill="#444" dy=".3em">First slide</text>
-            </svg>
-        </div>
-        <div class="carousel-item">
-            <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400"
-                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Second slide"
-                preserveAspectRatio="xMidYMid slice" focusable="false">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#777"></rect>
-                <text x="50%" y="50%" fill="#444" dy=".3em">Second slide</text>
-            </svg>
-        </div>
-        <div class="carousel-item">
-            <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400"
-                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Second slide"
-                preserveAspectRatio="xMidYMid slice" focusable="false">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#888"></rect>
-                <text x="50%" y="50%" fill="#444" dy=".3em">Third slide</text>
-            </svg>
-        </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
 </div>
-<br>
-
-{% if session['logged_in'] %}
-<li><a href="{{ url_for('request_evaluation') }}">Request Evaluation</a></li>
-<li><a href="{{ url_for('my_evaluations') }}">My Evaluations</a></li>
-{% endif %}
-{% if not session['logged_in'] %}
-<span>Please <a href="{{ url_for('login') }}">Log in</a> or <a href="{{ url_for('register') }}">Register</a> to continue!</span>
-{% endif %}
+<div class="row align-items-md-stretch">
+    <div class="col-md-6">
+        <div class="h-100 p-5 rounded-3">
+            <h2>Diversity</h2>
+            <p>At Lovejoy's Antiques, we understand the charm and historical significance of antiques. Our comprehensive marketplace offers a diverse array of items from various eras and regions, ensuring that every visitor can find something that resonates with their taste and interests. From elegant furniture and intricate jewelry to rare books and vintage artwork, our listings are curated to showcase the unique beauty and craftsmanship of each piece.</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="h-100 p-5 bg-body-tertiary border rounded-3">
+            <h2>Request Now</h2>
+            <p>In addition to our extensive marketplace, we offer a robust evaluation service. Our team of experienced appraisers is dedicated to providing accurate and insightful assessments of your antiques. Whether you're looking to understand the value of a family heirloom, preparing to sell a piece, or simply curious about its history, our experts are here to help.</p>
+            <a class="btn btn-outline-secondary" href="{{ url_for('request_evaluation') }}">Request Evaluation</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
