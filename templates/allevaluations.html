@@ -4,32 +4,24 @@
 <br>
 <h1>All Evaluations</h1>
 View the evaluation requests from all users on the site below.
-<table class="table table-bordered">
-    <tr>
-        <th>Evaluation Details</th>
-        <th>Image</th>
-        <th>Options</th>
-    </tr>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5 m-0">
     {% for row in evaluations %}
-    <tr evaluation-id="{{ row[0] }}">
-        <td>
-            <b>Email:</b> {{ row[1] }}<br>
-            <b>Phone no.:</b> Not finished<br>
-            <b>Preferred Contact:</b> {{ row[3] }}<br>
-            <b>Description:</b> {{ row[2] }}<br>
-            <b>Evaluation:</b> Awaiting evaluation...
-        </td>
-        <td>
-            {% if row[4] %}
-            <img src="{{ url_for('evaluation_image', filename=row[4]) }}">
-            {% else %}
-            No Image supplied.
-            {% endif %}
-        </td>
-        <td>
-            <a href="#">Delete</a>
-        </td>
-    </tr>
+    <div class="col">
+        <div class="card">
+            <img src="{{ url_for('evaluation_image', filename=row[4]) }}" class="card-img-top" alt="Image">
+            <div class="card-body">
+                <p>
+                    <b>Email:</b> {{ row[1] }}<br>
+                    <b>Phone no.:</b> Not finished<br>
+                    <b>Preferred Contact:</b> {{ row[3] }}<br>
+                    <b>Description:</b> {{ row[2] }}<br>
+                    <b>Evaluation:</b> Awaiting evaluation...
+                </p>
+                <a class="btn btn-sm btn-primary">Evaluate <i class="bi bi-sticky"></i></a>
+                <a class="btn btn-sm btn-danger">Delete <i class="bi bi-trash3"></i></a>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-</table>
+</div>
 {% endblock %}
