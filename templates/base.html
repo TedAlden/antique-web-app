@@ -22,26 +22,33 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/">Home</a>
                     </li>
-                    {% if session['logged_in'] and not session['is_admin'] %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('request_evaluation') }}">Request Evaluation</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Evaluations
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('request_evaluation') }}">Request Evaluation</a></li>
+                            {% if session['logged_in'] %}
+                            <li><a class="dropdown-item" href="{{ url_for('my_evaluations') }}">My Evaluations</a></li>
+                            {% endif %}
+                            {% if session['logged_in'] and session['is_admin'] %}
+                            <li><a class="dropdown-item" href="{{ url_for('all_evaluations') }}">All Evaluations</a></li>
+                            {% endif %}
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('my_evaluations') }}">My Evaluations</a>
-                    </li>
-                    {% elif session['logged_in'] and session['is_admin'] %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('all_evaluations') }}">All Evaluations</a>
-                    </li>
-                    {% endif %}
                 </ul>
                 <ul class="navbar-nav justify-content-end ms-auto">    
                     {% if session['logged_in'] %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="logout-button">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('account') }}">Manage Account</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('my_evaluations') }}">My Evaluations</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('account') }}">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logout-button">Logout</a></li>
+                        </ul>
                     </li>
                     {% endif %}
                     {% if not session['logged_in'] %}
