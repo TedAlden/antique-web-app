@@ -2,12 +2,13 @@
 {% block title %}Enter OTP{% endblock %}
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
+<br>
 <h1>Log into your account</h1>
 <form id="enterotp" action="{{ url_for('enterotp') }}" method="post">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
     <dl>
-        {{ render_field(form.otp) }}
+        {{ render_field(form.otp, class_="form-control") }}
     </dl>
-    <input type="submit" value="Login">
+    <input class="btn btn-primary" type="submit" value="Login">
 </form>
 {% endblock %}

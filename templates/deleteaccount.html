@@ -2,12 +2,13 @@
 {% block title %}Manage 2FA{% endblock %}
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
+<br>
 <h1>Delete your account</h1>
 <span>Are you sure you want to do this? This action is not reversible.</span>
 <form id="delete-account" action="/account/delete" method="post">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
     <dl>
-        {{ render_field(form.delete) }}
+        {{ render_field(form.delete, class_="btn btn-primary", label=False) }}
     </dl>
 </form>
 {% endblock %}

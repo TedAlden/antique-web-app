@@ -18,6 +18,7 @@ import os
 
 app = Flask(__name__)
 app.config.from_mapping(dotenv_values())
+app.testing = True
 
 # initialise mail server
 mail = Mail(app)
@@ -51,7 +52,7 @@ def all_evaluations():
         return render_template("allevaluations.html", evaluations=evaluations)
 
     else:
-        flash("You must be an admin to view this page.", "error")
+        flash("You must be an admin to view this page.", "danger")
         return redirect("/")
 
 
@@ -144,7 +145,7 @@ def register():
             return redirect(url_for("login"))
 
         else:
-            flash("Email is already registered.", "error")
+            flash("Email is already registered.", "danger")
 
     if request.method == "GET":
         # check if user is not already logged in
@@ -245,10 +246,10 @@ def login():
                         body = render_template("emails/verifypassword.html", token=token)
                         send_email(title, body, email)
 
-                        flash("Exceeded 5 failed login attempts. Please reverify your account via email to regain access.", "error")
+                        flash("Exceeded 5 failed login attempts. Please reverify your account via email to regain access.", "danger")
                         return redirect(url_for("login"))
 
-                    flash("Incorrect password.", "error")
+                    flash("Incorrect password.", "danger")
                     return redirect(url_for("login"))
 
             else:
@@ -256,7 +257,7 @@ def login():
                 return redirect("/login")
             
         else:
-            flash("No account exists with that email.", "error")
+            flash("No account exists with that email.", "danger")
             return redirect("/login")
 
     if request.method == "GET":
@@ -299,7 +300,7 @@ def enterotp():
         try:
             otp = int(form.otp.data)
         except ValueError:
-            flash("Invalid OTP.", "error")
+            flash("Invalid OTP.", "danger")
             return redirect("/login/enterotp")
 
         # use the user's secret to construct a TOTP authenticator    
@@ -330,7 +331,7 @@ def enterotp():
 
         # if incorrect OTP, allow another attempt
         else:
-            flash("Incorrect OTP.", "error")
+            flash("Incorrect OTP.", "danger")
             return redirect(url_for("enterotp"))
 
     if request.method == "GET":
@@ -372,7 +373,7 @@ def enter_security_questions():
             return redirect("/")
         # keep them on this page if the answers are wrong
         else:
-            flash("Incorrect security questions.", "error")
+            flash("Incorrect security questions.", "danger")
             return redirect(url_for("enter_security_questions"))
 
     if request.method == "GET":
@@ -448,7 +449,7 @@ def request_password_reset():
             return redirect("/")
 
         else:
-            flash("Email does not exist.", "error")
+            flash("Email does not exist.", "danger")
             return redirect(url_for("request_password_reset"))
 
     if request.method == "GET":
@@ -471,7 +472,7 @@ def reset_password(token):
 
     # make sure the reset password link has not expired
     if time() > expires:
-        flash("Reset password link has expired. Request a new one.", "error")
+        flash("Reset password link has expired. Request a new one.", "danger")
         return redirect(url_for("login"))
 
     if request.method == "POST":

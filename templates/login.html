@@ -3,16 +3,18 @@
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
 <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+<br>
 <h1>Log into your account</h1>
+<br>
 <form id="login" action="{{ url_for('login') }}" method="post">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
-    <dl>
-        {{ render_field(form.email) }}
-        {{ render_field(form.password) }}
-        {{ render_field(form.recaptcha) }}
-    </dl>
-    <input type="submit" value="Login">
-</form><br>
+    {{ render_field(form.email, class_="form-control") }}
+    {{ render_field(form.password, class_="form-control") }}
+    {{ render_field(form.recaptcha) }}
+    <br>
+    <input class="btn btn-primary" type="submit" value="Login">
+</form>
+<br>
 <span><a href="{{ url_for('request_password_reset') }}">Forgot password?</a></span></br>
 <span>Don't have an account yet? <a href="{{ url_for('register') }}">Register</a> here.</span>
 {% endblock %}

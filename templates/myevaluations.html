@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block title %}My Evaluations{% endblock %}
 {% block content %}
+<br>
 <h1>My Evaluations</h1>
-View your submitted evaluations below.
-Want to <a href="{{ url_for('request_evaluation') }}">request another evaluation</a>?
-<br><br>
-<table class="evaluations">
+View your submitted evaluations below. Want to <a href="{{ url_for('request_evaluation') }}">request another evaluation</a>?
+<br>
+<table class="table table-bordered">
     <tr>
         <th>Evaluation Details</th>
         <th>Image</th>

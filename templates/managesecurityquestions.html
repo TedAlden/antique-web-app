@@ -2,18 +2,19 @@
 {% block title %}Manage Security Questions{% endblock %}
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
+<br>
 <h1>Manage Security Questions</h1>
 <form id="manage-security-questions" action="{{ url_for('manage_security_questions') }}" method="post">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
     <dl>
-        {{ render_field(form.question1) }}
-        {{ render_field(form.answer1) }}
-        {{ render_field(form.question2) }}
-        {{ render_field(form.answer2) }}
-        {{ render_field(form.question3) }}
-        {{ render_field(form.answer3) }}
+        {{ render_field(form.question1, class_="form-control") }}
+        {{ render_field(form.answer1, class_="form-control") }}
+        {{ render_field(form.question2, class_="form-control") }}
+        {{ render_field(form.answer2, class_="form-control") }}
+        {{ render_field(form.question3, class_="form-control") }}
+        {{ render_field(form.answer3, class_="form-control") }}
     </dl>
-    <input type="submit" value="Update">
+    <input class="btn btn-primary" type="submit" value="Update">
 </form>
 <br>
 {% endblock %}

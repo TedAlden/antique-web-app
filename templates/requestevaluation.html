@@ -2,15 +2,16 @@
 {% block title %}Request Evaluation{% endblock %}
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
+<br>
 <h1>Request an Evaluation</h1>
 <form id="request-evaluation" action="{{ url_for('request_evaluation') }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
     <dl>
-        {{ render_field(form.description) }}
-        {{ render_field(form.contact) }}
-        {{ render_field(form.image) }}
+        {{ render_field(form.description, class_="form-control") }}
+        {{ render_field(form.contact, class_="form-control") }}
+        {{ render_field(form.image, class_="form-control") }}
     </dl>
-    <input type="submit" value="Request Evaluation">
+    <input class="btn btn-primary" type="submit" value="Request Evaluation">
 </form>
 <br>
 <span>Already requested an evaluation? View your <a href="{{ url_for('my_evaluations') }}">evaluations</a> here.</span>

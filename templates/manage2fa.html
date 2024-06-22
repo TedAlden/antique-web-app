@@ -3,23 +3,20 @@
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
 <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-<script>
-function copySecret() {
-    var element = document.getElementById("twofasecret");
-    element.select();
-    navigator.clipboard.writeText(element.value);
-    alert("Copied your secret to clipboard: " + element.value);
-}
-</script>
+<br>
 <h1>Manage two-factor authentication (2FA)</h4>
-<span>Currently enabled: {{ enabled }}</span>
+
 <form id="set2fa" action="/account/manage2fa" method="post">
     <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
-    <dl>
-        {{ render_field(form.enable) }}
-        {{ render_field(form.disable) }}
-    </dl>
+    <div class="input-group">
+        {{ render_field(form.enable, class_="btn btn-primary", label=False) }}
+        {{ render_field(form.disable, class_="btn btn-primary", label=False) }}
+    </div>
 </form>
+<br>
+<span>Currently enabled: <strong>{{ enabled }}</strong></span>
+
+<hr>
 
 <h2>Instructions</h1>
 <ul>
@@ -27,13 +24,26 @@ function copySecret() {
     <li>Set up a new authenticator by scanning the QR code or manually entering the '2FA secret' below.</li>
     <li>Then click the 'enable' button above to start using 2-factor authentication!</li>
 </ul>
+
+<hr>
+
 <span>Your 2FA secret:</span><br>
-<input id="twofasecret" readonly value="{{ secret }}">
-<button onclick="copySecret()">Copy</button>
-<br><br>
-<span>Scan QR code:</span><br>
+<div class="input-group">
+    <input id="twofasecret" type="text" class="form-control" value="{{ secret }}" readonly>
+    <button id="copybutton" class="btn btn-secondary" type="button" title="Copy to Clipboard" onclick="copySecret()">Copy</button>
+</div>
+<br>
+<span>QR Code:</span><br>
 <div id="qrcode"></div>
+
 <script type="text/javascript">
+function copySecret() {
+    var element = document.getElementById("twofasecret");
+    element.select();
+    navigator.clipboard.writeText(element.value);
+    alert("Copied your secret to clipboard!\n\n" + element.value);
+}
+
 var email = "{{ session['email'] }}";
 var secret = "{{ secret }}";
 var qrcode = new QRCode(document.getElementById("qrcode"), {
