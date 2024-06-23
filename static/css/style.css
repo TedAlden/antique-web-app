@@ -8,3 +8,7 @@
 html {
     overflow-y: scroll;
 }
+
+div.alert:first-child {
+    margin-top: 1rem;
+}

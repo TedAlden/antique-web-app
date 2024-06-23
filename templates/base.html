@@ -111,7 +111,6 @@
     <div class="container" id="content">
         {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
-        <br>
         <div id="flashes">
             {% for category, message in messages %}
             <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
