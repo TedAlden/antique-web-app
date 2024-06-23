@@ -401,11 +401,27 @@ def account():
     if not session.get("logged_in"):
         flash("You must log in or register first.", "warning")
         return redirect("/login")
+    
+    email = session.get("email")
+    twofa_enabled = models.check_2fa_enabled(session.get("email"))
+    twofa_secret = models.get_user_2fa_secret(session.get("email"))
 
-    return render_template("account.html")
+    questions_form = ManageSecurityQuestions()
+    twofa_form = Manage2FA()
+    delete_form = DeleteAccountForm()
+
+    old_questions = models.get_user_security_questions(email)
+    questions_form.question1.data = old_questions[0]
+    questions_form.answer1.data = old_questions[1]
+    questions_form.question2.data = old_questions[2]
+    questions_form.answer2.data = old_questions[3]
+    questions_form.question3.data = old_questions[4]
+    questions_form.answer3.data = old_questions[5]
+
+    return render_template("account.html", questions_form=questions_form, twofa_form=twofa_form, twofa_enabled=twofa_enabled, twofa_secret=twofa_secret, delete_form=delete_form)
 
 
-@app.route("/account/delete", methods=["POST", "GET"])
+@app.route("/account/delete", methods=["POST"])
 def delete_account():
     form = DeleteAccountForm(request.form)
 
@@ -421,9 +437,6 @@ def delete_account():
 
         flash("Account successfully deleted.", "success")
         return redirect("/")
-
-    if request.method == "GET":
-        return render_template("deleteaccount.html", form=form)
 
 
 @app.route("/account/reset-password", methods=["GET", "POST"])
@@ -495,7 +508,7 @@ def reset_password(token):
             return f"Email not found!", 404
 
 
-@app.route("/account/managesecurityquestions", methods=["GET", "POST"])
+@app.route("/account/managesecurityquestions", methods=["POST"])
 def manage_security_questions():
     form = ManageSecurityQuestions(request.form)
     email = session.get("email")
@@ -509,28 +522,11 @@ def manage_security_questions():
             models.set_user_security_questions(email, q1, a1, q2, a2, q3, a3)
             
             flash("Successfully updated security questions.", "success")
-            return redirect(url_for("manage_security_questions"))
-
-    elif request.method == "GET":
-        # redirect to login page if user not already logged in
-        if not session.get("logged_in"):
-            flash("You must log in or register first.", "warning")
-            return redirect(url_for("login"))
-
-        if email:
-            # autofill the form with previous questions and answers
-            old_questions = models.get_user_security_questions(email)
-            form.question1.data = old_questions[0]
-            form.answer1.data = old_questions[1]
-            form.question2.data = old_questions[2]
-            form.answer2.data = old_questions[3]
-            form.question3.data = old_questions[4]
-            form.answer3.data = old_questions[5]
-        
-        return render_template("managesecurityquestions.html", form=form)
+            # return redirect(url_for("manage_security_questions"))
+            return redirect(url_for("account"))
 
 
-@app.route("/account/manage2fa", methods=["GET", "POST"])
+@app.route("/account/manage2fa", methods=["POST"])
 def manage2fa():
     form = Manage2FA(request.form)
 
@@ -541,29 +537,16 @@ def manage2fa():
             if form.enable.data:
                 models.set_2fa_enabled(email, True)
                 flash("Successfully enabled 2FA.", "success")
-                return redirect(url_for("manage2fa"))
+                return redirect(url_for("account"))
 
             # disable 2FA if the user presses the "Disable" button
             elif form.disable.data:
                 models.set_2fa_enabled(email, False)
                 flash("Successfully disabled 2FA.", "success")
-                return redirect(url_for("manage2fa"))
+                return redirect(url_for("account"))
 
         else:
             return "Invalid email.", 400
-
-    elif request.method == "GET":
-        # redirect to login page if user is not already logged in
-        if not session.get("logged_in"):
-            flash("You must log in or register first.", "warning")
-            return redirect("/login")
-
-        # display the page with the current enabled/disbaled status and
-        # the 2FA secret
-        enabled = models.check_2fa_enabled(session.get("email"))
-        secret = models.get_user_2fa_secret(session.get("email"))
-        
-        return render_template("manage2fa.html", enabled=enabled, secret=secret, form=form)
 
 
 @app.errorhandler(CSRFError)

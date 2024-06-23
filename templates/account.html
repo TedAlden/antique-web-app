@@ -4,12 +4,233 @@
 {% block content %}
 <br>
 <h1>Welcome {{ session["username"] }}</h1>
-<h3>Manage your account</h3>
-<ul>
-    <!-- <li><a href="#">Change email</a></li> -->
-    <!-- <li><a href="#">Change password</a></li> -->
-    <li><a href="{{ url_for('manage2fa') }}">Manage two-factor authentication (2FA)</a></li>
-    <li><a href="{{ url_for('manage_security_questions') }}">Manage security questions</a></li>
-    <li><a href="{{ url_for('delete_account') }}">Delete account</a></li>
-</ul>
+<br>
+<div class="row" id="manage-account">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Profile Settings</h5>
+            </div>
+            <div class="list-group list-group-flush" role="tablist">
+                <a class="list-group-item list-group-item-action active" data-bs-toggle="list" href="#account" role="tab">
+                    Account
+                </a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#password" role="tab">
+                    Password
+                </a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#security-questions" role="tab">
+                    Security Questions
+                </a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#two-factor-auth" role="tab">
+                    Two-Factor Authentication
+                </a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#delete-account" role="tab">
+                    Delete account
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="tab-content">
+            <div class="tab-pane show active" id="account" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Public info</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="inputUsername">Username</label>
+                                        <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputBio">Biography</label>
+                                        <textarea rows="2" class="form-control" id="inputBio" placeholder="Say something about yourself..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <img alt="Andrew Jones" src="https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg" class="rounded-circle img-responsive mt-2" width="128" height="128">
+                                        <div class="mt-2">
+                                            <span class="btn btn-sm btn-primary">Upload</span>
+                                        </div>
+                                        <small>For best results, use an image at least 128px by 128px in .jpg format</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Private info</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputFirstName">First name</label>
+                                    <input type="text" class="form-control" id="inputFirstName" placeholder="First name">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inputLastName">Last name</label>
+                                    <input type="text" class="form-control" id="inputLastName" placeholder="Last name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail4">Email</label>
+                                <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputAddress">Address</label>
+                                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputAddress2">Address 2</label>
+                                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputCity">City</label>
+                                    <input type="text" class="form-control" id="inputCity">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">State</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="inputZip">Zip</label>
+                                    <input type="text" class="form-control" id="inputZip">
+                                </div>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="password" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Password</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="inputPasswordCurrent">Current password</label>
+                                <input type="password" class="form-control" id="inputPasswordCurrent">
+                                <small><a href="#">Forgot your password?</a></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPasswordNew">New password</label>
+                                <input type="password" class="form-control" id="inputPasswordNew">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPasswordNew2">Verify password</label>
+                                <input type="password" class="form-control" id="inputPasswordNew2">
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="security-questions" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Security Questions</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="manage-security-questions" action="{{ url_for('manage_security_questions') }}" method="post">
+                            <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
+                            <dl>
+                                {{ render_field(questions_form.question1, class_="form-control") }}
+                                {{ render_field(questions_form.answer1, class_="form-control") }}
+                                {{ render_field(questions_form.question2, class_="form-control") }}
+                                {{ render_field(questions_form.answer2, class_="form-control") }}
+                                {{ render_field(questions_form.question3, class_="form-control") }}
+                                {{ render_field(questions_form.answer3, class_="form-control") }}
+                            </dl>
+                            <input class="btn btn-primary" type="submit" value="Update">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="two-factor-auth" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Two-Factor Authentication</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5>Instructions</h5>
+                        <ul>
+                            <li>Download the Google Authenticator app on your mobile device.</li>
+                            <li>Set up a new authenticator by scanning the QR code or manually entering the '2FA secret' below.</li>
+                            <li>Then click the 'enable' button above to start using 2-factor authentication!</li>
+                        </ul>
+                        <hr>
+                        <h6>Your 2FA secret</h6>
+                        <div class="input-group">
+                            <input id="twofasecret" type="text" class="form-control" value="7INd3UuVMTtHT5ZcnKJRQ9zBsMxpPOAI" readonly>
+                            <button id="copybutton" class="btn btn-secondary" type="button" title="Copy to Clipboard" onclick="copySecret()">Copy</button>
+                        </div>
+                        <br>
+                        <div id="qrcode"></div>
+                        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+                        <script type="text/javascript">
+                        function copySecret() {
+                            var element = document.getElementById("twofasecret");
+                            element.select();
+                            navigator.clipboard.writeText(element.value);
+                            alert("Copied your secret to clipboard!\n\n" + element.value);
+                        }
+                        var email = "{{ session.get('email') }}";
+                        var secret = "{{ twofa_secret }}";
+                        var qrcode = new QRCode(document.getElementById("qrcode"), {
+                            text: `otpauth://totp/LovejoysAntiques:${email}?secret=${secret}&issuer=LovejoysAntiques`,
+                            width: 128,
+                            height: 128
+                        });
+                        </script>
+                        <hr>
+                        <form id="set2fa" action="/account/manage2fa" method="post">
+                            <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
+                            <div class="input-group">
+                                {{ render_field(twofa_form.enable, class_="btn btn-primary", label=False) }}
+                                {{ render_field(twofa_form.disable, class_="btn btn-primary", label=False) }}
+                            </div>
+                        </form>
+                        <span>Currently enabled: <strong>{{ twofa_enabled }}</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="delete-account" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Delete Account</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Are you sure you would like to delete your account? This action can not be undone.</p>
+                        <form id="delete-account" action="/account/delete" method="post">
+                            <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
+                            <dl>
+                                {{ render_field(delete_form.delete, class_="btn btn-danger", label=False) }}
+                            </dl>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

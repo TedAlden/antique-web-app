@@ -12,3 +12,13 @@ html {
 div.alert:first-child {
     margin-top: 1rem;
 }
+
+#manage-account .card {
+    margin-bottom: 1.5rem;
+}
+
+#manage-account .card-header {
+    padding: .75rem 1.25rem;
+    margin-bottom: 0;
+    color: inherit;
+}
