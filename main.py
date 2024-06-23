@@ -418,7 +418,9 @@ def account():
     questions_form.question3.data = old_questions[4]
     questions_form.answer3.data = old_questions[5]
 
-    return render_template("account.html", questions_form=questions_form, twofa_form=twofa_form, twofa_enabled=twofa_enabled, twofa_secret=twofa_secret, delete_form=delete_form)
+    twofa_form.enabled.data = twofa_enabled
+
+    return render_template("account.html", questions_form=questions_form, twofa_form=twofa_form, twofa_secret=twofa_secret, delete_form=delete_form)
 
 
 @app.route("/account/delete", methods=["POST"])
@@ -533,14 +535,11 @@ def manage2fa():
     if request.method == "POST":
         email = session.get("email")
         if email:
-            # enable 2FA if the user presses the "Enable" button
-            if form.enable.data:
+            if form.enabled.data:
                 models.set_2fa_enabled(email, True)
                 flash("Successfully enabled 2FA.", "success")
                 return redirect(url_for("account"))
-
-            # disable 2FA if the user presses the "Disable" button
-            elif form.disable.data:
+            else:
                 models.set_2fa_enabled(email, False)
                 flash("Successfully disabled 2FA.", "success")
                 return redirect(url_for("account"))

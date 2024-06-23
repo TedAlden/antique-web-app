@@ -205,12 +205,11 @@
                         <hr>
                         <form id="set2fa" action="/account/manage2fa" method="post">
                             <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
-                            <div class="input-group">
-                                {{ render_field(twofa_form.enable, class_="btn btn-primary", label=False) }}
-                                {{ render_field(twofa_form.disable, class_="btn btn-primary", label=False) }}
-                            </div>
+                            <dl>
+                                {{ render_field(twofa_form.enabled, class_="") }}
+                            </dl>
+                            <input class="btn btn-primary" type="submit" value="Update">
                         </form>
-                        <span>Currently enabled: <strong>{{ twofa_enabled }}</strong></span>
                     </div>
                 </div>
             </div>

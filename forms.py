@@ -110,8 +110,7 @@ class ResetPasswordForm(Form):
 
 
 class Manage2FA(Form):
-    enable = SubmitField()
-    disable = SubmitField()
+    enabled = BooleanField('Enabled')
 
 
 class DeleteAccountForm(Form):
