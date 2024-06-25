@@ -6,6 +6,7 @@
 <h1>Welcome {{ session["username"] }}</h1>
 <br>
 <div class="row" id="manage-account">
+    <!-- LHS navigation tabs -->
     <div class="col-lg-4">
         <div class="card">
             <div class="card-header">
@@ -30,8 +31,10 @@
             </div>
         </div>
     </div>
+    <!-- RHS settings content -->
     <div class="col-lg-8">
         <div class="tab-content">
+            <!-- Account settings -->
             <div class="tab-pane show active" id="account" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
@@ -60,13 +63,10 @@
                                     </div>
                                 </div>
                             </div>
-
                             <button type="submit" class="btn btn-primary">Save changes</button>
                         </form>
-
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Private info</h5>
@@ -118,6 +118,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Password settings -->
             <div class="tab-pane" id="password" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
@@ -145,6 +146,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Security questions settings -->
             <div class="tab-pane" id="security-questions" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
@@ -168,6 +170,7 @@
                     </div>
                 </div>
             </div>
+            <!-- 2FA settings -->
             <div class="tab-pane" id="two-factor-auth" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
@@ -188,22 +191,7 @@
                         </div>
                         <br>
                         <div id="qrcode"></div>
-                        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-                        <script type="text/javascript">
-                        function copySecret() {
-                            var element = document.getElementById("twofasecret");
-                            element.select();
-                            navigator.clipboard.writeText(element.value);
-                            alert("Copied your secret to clipboard!\n\n" + element.value);
-                        }
-                        var email = "{{ session.get('email') }}";
-                        var secret = "{{ twofa_secret }}";
-                        var qrcode = new QRCode(document.getElementById("qrcode"), {
-                            text: `otpauth://totp/LovejoysAntiques:${email}?secret=${secret}&issuer=LovejoysAntiques`,
-                            width: 128,
-                            height: 128
-                        });
-                        </script>
+                        
                         <hr>
                         <form id="set2fa" action="/account/manage2fa" method="post">
                             <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/> 
@@ -215,6 +203,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Account deletion settings -->
             <div class="tab-pane" id="delete-account" role="tabpanel">
                 <div class="card">
                     <div class="card-header">
@@ -234,4 +223,23 @@
         </div>
     </div>
 </div>
+<!-- Scripts -->
+<script src="/static/js/qrcode.min.js"></script>
+<script type="text/javascript">
+// Copy secret button
+function copySecret() {
+    var element = document.getElementById("twofasecret");
+    element.select();
+    navigator.clipboard.writeText(element.value);
+    alert("Copied your secret to clipboard!\n\n" + element.value);
+}
+// Generate QRCode
+var email = "{{ session.get('email') }}";
+var secret = "{{ twofa_secret }}";
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: `otpauth://totp/LovejoysAntiques:${email}?secret=${secret}&issuer=LovejoysAntiques`,
+    width: 128,
+    height: 128
+});
+</script>
 {% endblock %}
