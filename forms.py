@@ -145,6 +145,7 @@ class ManageSecurityQuestions(Form):
     answer3 = StringField('Answer 3', [
         validators.DataRequired()
     ])
+    enabled = BooleanField('Enabled')
 
 
 class EnterSecurityQuestions(Form):

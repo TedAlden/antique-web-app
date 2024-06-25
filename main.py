@@ -403,6 +403,7 @@ def account():
         return redirect("/login")
     
     email = session.get("email")
+    questions_enabled = models.get_user_security_questions_enabled(email)
     twofa_enabled = models.check_2fa_enabled(session.get("email"))
     twofa_secret = models.get_user_2fa_secret(session.get("email"))
 
@@ -417,6 +418,7 @@ def account():
     questions_form.answer2.data = old_questions[3]
     questions_form.question3.data = old_questions[4]
     questions_form.answer3.data = old_questions[5]
+    questions_form.enabled.data = questions_enabled
 
     twofa_form.enabled.data = twofa_enabled
 
@@ -521,7 +523,10 @@ def manage_security_questions():
             # from the form
             q1, q2, q3 = form.question1.data, form.question2.data, form.question3.data
             a1, a2, a3 = form.answer1.data, form.answer2.data, form.answer3.data
+            enabled = form.enabled.data
+
             models.set_user_security_questions(email, q1, a1, q2, a2, q3, a3)
+            models.set_user_security_questions_enabled(email, enabled)
             
             flash("Successfully updated security questions.", "success")
             # return redirect(url_for("manage_security_questions"))
