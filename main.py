@@ -397,29 +397,31 @@ def logout():
 
 @app.route("/account")
 def account():
-    # user can only view their account page if they are logged in
+    # Require user to be logged in to view the account settings page
     if not session.get("logged_in"):
         flash("You must log in or register first.", "warning")
         return redirect("/login")
     
+    # Get info from database model
     email = session.get("email")
+    questions = models.get_user_security_questions(email)
     questions_enabled = models.get_user_security_questions_enabled(email)
-    twofa_enabled = models.check_2fa_enabled(session.get("email"))
-    twofa_secret = models.get_user_2fa_secret(session.get("email"))
+    twofa_enabled = models.check_2fa_enabled(email)
+    twofa_secret = models.get_user_2fa_secret(email)
 
+    # Create WTForm objects
     questions_form = ManageSecurityQuestions()
     twofa_form = Manage2FA()
     delete_form = DeleteAccountForm()
 
-    old_questions = models.get_user_security_questions(email)
-    questions_form.question1.data = old_questions[0]
-    questions_form.answer1.data = old_questions[1]
-    questions_form.question2.data = old_questions[2]
-    questions_form.answer2.data = old_questions[3]
-    questions_form.question3.data = old_questions[4]
-    questions_form.answer3.data = old_questions[5]
+    # Pre-populate forms with existing information
+    questions_form.question1.data = questions[0]
+    questions_form.answer1.data = questions[1]
+    questions_form.question2.data = questions[2]
+    questions_form.answer2.data = questions[3]
+    questions_form.question3.data = questions[4]
+    questions_form.answer3.data = questions[5]
     questions_form.enabled.data = questions_enabled
-
     twofa_form.enabled.data = twofa_enabled
 
     return render_template("account.html", questions_form=questions_form, twofa_form=twofa_form, twofa_secret=twofa_secret, delete_form=delete_form)
