@@ -95,13 +95,19 @@ Make sure you have the [required](#requirements) version of Python installed.
     MAIL_PASSWORD=
     ```
 
-9. Run the application using Flask on port `5000`. You can change the port if necessary.
+9. Run the application using Flask on the default port of `5000`.
 
     ```bash
-    flask run --port 5000
+    flask --app main run --host=0.0.0.0
     ```
 
-10. Visit the website via the address output in the terminal when running the application. This will probably be `127.0.0.1:5000`.
+    Or, run the server on another port by specifying the command-line argument. For example, on port `8080`:
+
+    ```bash
+    flask --app main run --host=0.0.0.0 --port=8080
+    ```
+
+10. Visit the website in your browser. The address is output in the terminal when running the application. This will be `127.0.0.1:5000` by default on a local machine unless a different port was specified.
 
 ## Features
 
